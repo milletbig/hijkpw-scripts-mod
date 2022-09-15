@@ -1776,11 +1776,11 @@ showLog() {
 
 menu() {
     clear
-    echo "#############################################################"
-    echo -e "#                     ${RED}Xray一键安装脚本${PLAIN}			#"
+    echo "#################################################################"
+    echo -e "#                     ${RED}Xray一键安装脚本${PLAIN}				#"
     echo -e "# ${GREEN}原作者${PLAIN}: 网络跳越(hijk)					#"
-    echo -e "# ${GREEN}作  者${PLAIN}: Shawn						#"
-    echo "#############################################################"
+    echo -e "# ${GREEN}作  者${PLAIN}: Shawn							#"
+    echo "#################################################################"
     echo -e "  ${GREEN}1.${PLAIN}   安装Xray-VMESS"
     echo -e "  ${GREEN}2.${PLAIN}   安装Xray-${BLUE}VMESS+mKCP${PLAIN}"
     echo -e "  ${GREEN}3.${PLAIN}   安装Xray-VMESS+TCP+TLS"
