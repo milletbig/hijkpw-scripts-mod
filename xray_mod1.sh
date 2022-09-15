@@ -1,6 +1,6 @@
 #!/bin/bash
 # xray一键安装脚本
-# Author: hijk<https://hijk.art>
+# Author: hijk<https://hijk.art>[Maintenance of the project has been stopped]
 
 
 RED="\033[31m"      # Error message
@@ -10,7 +10,7 @@ BLUE="\033[36m"     # Info message
 PLAIN='\033[0m'
 
 # 以下网站是随机从Google上找到的无广告小说网站，不喜欢请改成其他网址，以http或https开头
-# 搭建好后无法打开伪装域名，可能是反代小说网站挂了，请在网站留言，或者Github发issue，以便替换新的网站
+# 搭建好后无法打开伪装域名，可能是反代小说网站挂了，请在Github发issue，以便替换新的网站
 SITES=(
 http://www.quanben.io/
 http://www.ddxsku.com/
@@ -395,12 +395,12 @@ getData() {
         colorEcho $BLUE " 请选择伪装站类型:"
         echo "   1) 静态网站(位于/usr/share/nginx/html)"
         echo "   2) 小说站(随机选择)"
-        echo "   3) 美女站(https://imeizi.me)"
-        echo "   4) 高清壁纸站(https://bing.imeizi.me)"
+        echo "   3) 美女站(https://photo.ihansen.org/tag/girl)"
+        echo "   4) 高清壁纸站(https://unsplash.com)"
         echo "   5) 自定义反代站点(需以http或者https开头)"
         read -p "  请选择伪装网站类型[默认:高清壁纸站]" answer
         if [[ -z "$answer" ]]; then
-            PROXY_URL="https://bing.imeizi.me"
+            PROXY_URL="https://unsplash.com/"
         else
             case $answer in
             1)
@@ -423,10 +423,10 @@ getData() {
                 done
                 ;;
             3)
-                PROXY_URL="https://imeizi.me"
+                PROXY_URL="https://photo.ihansen.org/tag/girl"
                 ;;
             4)
-                PROXY_URL="https://bing.imeizi.me"
+                PROXY_URL="https://unsplash.com"
                 ;;
             5)
                 read -p " 请输入反代站点(以http或者https开头)：" PROXY_URL
@@ -486,7 +486,7 @@ module_hotfixes=true' > /etc/yum.repos.d/nginx.repo
         fi
         $CMD_INSTALL nginx
         if [[ "$?" != "0" ]]; then
-            colorEcho $RED " Nginx安装失败，请到 https://hijk.art 反馈"
+            colorEcho $RED " Nginx安装失败，请到 github 反馈"
             exit 1
         fi
         systemctl enable nginx
@@ -551,7 +551,7 @@ getCert() {
             ~/.acme.sh/acme.sh   --issue -d $DOMAIN --keylength ec-256 --pre-hook "nginx -s stop || { echo -n ''; }" --post-hook "nginx -c /www/server/nginx/conf/nginx.conf || { echo -n ''; }"  --standalone
         fi
         [[ -f ~/.acme.sh/${DOMAIN}_ecc/ca.cer ]] || {
-            colorEcho $RED " 获取证书失败，请复制上面的红色文字到 https://hijk.art 反馈"
+            colorEcho $RED " 获取证书失败，请复制上面的红色文字到 github 反馈"
             exit 1
         }
         CERT_FILE="/usr/local/etc/xray/${DOMAIN}.pem"
@@ -561,7 +561,7 @@ getCert() {
             --fullchain-file $CERT_FILE \
             --reloadcmd     "service nginx force-reload"
         [[ -f $CERT_FILE && -f $KEY_FILE ]] || {
-            colorEcho $RED " 获取证书失败，请到 https://hijk.art 反馈"
+            colorEcho $RED " 获取证书失败，请到 github 反馈"
             exit 1
         }
     else
@@ -1778,7 +1778,7 @@ menu() {
     clear
     echo "#############################################################"
     echo -e "#                     ${RED}Xray一键安装脚本${PLAIN}                      #"
-    echo -e "# ${GREEN}原作者${PLAIN}: 网络跳越(hijk)                                  #"
+    echo -e "# ${GREEN}原作者${PLAIN}: 网络跳越(hijk)                                   #"
     echo -e "# ${GREEN}作者${PLAIN}: shawn                                    	     #"
     echo "#############################################################"
     echo -e "  ${GREEN}1.${PLAIN}   安装Xray-VMESS"
