@@ -803,7 +803,7 @@ installBBR() {
     if [[ "$PMT" = "yum" ]]; then
         if [[ "$V6_PROXY" = "" ]]; then
             rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
-            rpm -Uvh https://www.elrepo.org/elrepo-release-9.el9.elrepo.noarch.rpm
+            rpm -Uvh http://www.elrepo.org/elrepo-release-9.el9.elrepo.noarch.rpm
             $CMD_INSTALL --enablerepo=elrepo-kernel kernel-ml
             $CMD_REMOVE kernel-3.*
             grub2-set-default 0
