@@ -13,11 +13,15 @@ PLAIN='\033[0m'
 # 搭建好后无法打开伪装域名，可能是反代小说网站挂了，请在Github发issue，以便替换新的网站
 SITES=(
 http://www.quanben.io/
-http://www.ddxsku.com/
-http://www.biqu6.com/
 http://www.55shuba.com/
 https://www.23xsw.cc/
-http://www.bequgexs.com/
+https://www.xindingdianxsw.com/
+https://www.miluxs.com/
+https://www.nantunwang.com/
+https://www.23hh.com/
+https://www.baojiaoxs.com/
+https://www.du61.com/
+https://www.wangshuge.com/
 )
 
 CONFIG_FILE="/usr/local/etc/xray/config.json"
