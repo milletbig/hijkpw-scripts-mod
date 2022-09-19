@@ -477,7 +477,7 @@ installNginx() {
             if [[ "$?" != "0" ]]; then
                 echo '[nginx-stable]
 name=nginx stable repo
-baseurl=http://nginx.org/packages/centos/9/x86_64/
+baseurl=http://nginx.org/packages/centos/$releasever/$basearch/
 gpgcheck=1
 enabled=1
 gpgkey=https://nginx.org/keys/nginx_signing.key
@@ -659,8 +659,8 @@ server {
     charset utf-8;
 
     # ssl配置
-    ssl_protocols TLSv1.1 TLSv1.2 TLSv1.3;
-    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA256:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA;
+    ssl_protocols TLSv1.1 TLSv1.2;
+    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
     ssl_ecdh_curve secp384r1;
     ssl_prefer_server_ciphers on;
     ssl_session_cache shared:SSL:10m;
@@ -799,7 +799,7 @@ installBBR() {
     if [[ "$PMT" = "yum" ]]; then
         if [[ "$V6_PROXY" = "" ]]; then
             rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
-            rpm -Uvh https://www.elrepo.org/elrepo-release-9.el9.elrepo.noarch.rpm
+            rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-4.el7.elrepo.noarch.rpm
             $CMD_INSTALL --enablerepo=elrepo-kernel kernel-ml
             $CMD_REMOVE kernel-3.*
             grub2-set-default 0
