@@ -57,6 +57,11 @@ hostip修改版
 bash <(curl -Ls https://raw.githubusercontent.com/wixfreto/hijkpw-scripts-mod/main/xray_mod1.sh)
 ```
 
+hostip修改版【自用版】建议采用CentOS 9系统，支持tls1.3
+```
+bash <(curl -Ls https://raw.githubusercontent.com/wixfreto/hijkpw-scripts-mod/main/xray_mod1_tls1_3.sh)
+```
+
 hostip去除版
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/wixfreto/hijkpw-scripts-mod/main/xray_mod2.sh)
