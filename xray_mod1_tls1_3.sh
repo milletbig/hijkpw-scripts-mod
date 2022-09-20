@@ -400,11 +400,11 @@ getData() {
         echo "   1) 静态网站(位于/usr/share/nginx/html)"
         echo "   2) 小说站(随机选择)"
         echo "   3) 美女站(https://photo.ihansen.org/tag/girl)"
-        echo "   4) 高清壁纸站(https://unsplash.com)"
+        echo "   4) 高清壁纸站(https://wallroom.io/)"
         echo "   5) 自定义反代站点(需以http或者https开头)"
         read -p "  请选择伪装网站类型[默认:高清壁纸站]" answer
         if [[ -z "$answer" ]]; then
-            PROXY_URL="https://unsplash.com/"
+            PROXY_URL="https://wallroom.io/"
         else
             case $answer in
             1)
@@ -430,7 +430,7 @@ getData() {
                 PROXY_URL="https://photo.ihansen.org/tag/girl"
                 ;;
             4)
-                PROXY_URL="https://unsplash.com"
+                PROXY_URL="https://wallroom.io/"
                 ;;
             5)
                 read -p " 请输入反代站点(以http或者https开头)：" PROXY_URL
