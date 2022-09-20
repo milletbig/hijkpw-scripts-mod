@@ -1,6 +1,7 @@
 #!/bin/bash
 # xray一键安装脚本
 # Author: hijk<https://hijk.art>[Maintenance of the project has been stopped]
+# 建议采用CentOS 9，否则需要修改BBR配置部分809行内容
 
 
 RED="\033[31m"      # Error message
@@ -1786,6 +1787,7 @@ menu() {
     echo -e "#                     ${RED}Xray一键安装脚本${PLAIN}				#"
     echo -e "# ${GREEN}原作者${PLAIN}: 网络跳越(hijk)					#"
     echo -e "# ${GREEN}作  者${PLAIN}: Shawn							#"
+    echo -e "# ${GREEN}系统建议${PLAIN}:${BLUE}CentOS 9					#"
     echo "#################################################################"
     echo -e "  ${GREEN}1.${PLAIN}   安装Xray-VMESS"
     echo -e "  ${GREEN}2.${PLAIN}   安装Xray-${BLUE}VMESS+mKCP${PLAIN}"
