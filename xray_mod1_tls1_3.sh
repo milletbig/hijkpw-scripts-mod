@@ -158,7 +158,7 @@ normalizeVersion() {
                 echo "$1"
             ;;
             http*)
-                echo "v1.5.5"
+                echo "v1.6.0"
             ;;
             *)
                 echo "v$1"
