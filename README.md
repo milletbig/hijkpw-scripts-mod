@@ -59,7 +59,7 @@ hostip修改版
 bash <(curl -Ls https://raw.githubusercontent.com/milletbig/hijkpw-scripts-mod/main/xray_mod1.sh)
 ```
 
-hostip修改版【自用维护】建议采用CentOS 9系统，支持tls1.3，修改及增减伪装网站
+hostip修改版【自用维护】建议采用CentOS 9系统，仅采用TLSv1.2 and TLSv1.3
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/milletbig/hijkpw-scripts-mod/main/xray_mod1_tls3.sh)
 ```
