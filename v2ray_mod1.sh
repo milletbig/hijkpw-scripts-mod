@@ -12,22 +12,16 @@ PLAIN='\033[0m'
 # 以下网站是随机从Google上找到的无广告小说网站，不喜欢请改成其他网址，以http或https开头
 # 搭建好后无法打开伪装域名，可能是反代小说网站挂了，请在网站留言，或者Github发issue，以便替换新的网站
 SITES=(
-http://www.zhuizishu.com/
-http://xs.56dyc.com/
-#http://www.xiaoshuosk.com/
-#https://www.quledu.net/
-http://www.ddxsku.com/
-http://www.biqu6.com/
-https://www.wenshulou.cc/
-#http://www.auutea.com/
+http://www.quanben.io/
 http://www.55shuba.com/
-http://www.39shubao.com/
 https://www.23xsw.cc/
-https://www.huanbige.com/
-https://www.jueshitangmen.info/
-https://www.zhetian.org/
-http://www.bequgexs.com/
-http://www.tjwl.com/
+https://www.xindingdianxsw.com/
+https://www.miluxs.com/
+https://www.nantunwang.com/
+https://www.23hh.com/
+https://www.baojiaoxs.com/
+https://www.du61.com/
+https://www.wangshuge.com/
 )
 
 CONFIG_FILE="/etc/v2ray/config.json"
@@ -351,20 +345,20 @@ getData() {
     if [[ "$XTLS" = "true" ]]; then
         echo ""
         colorEcho $BLUE " 请选择流控模式:" 
-        echo -e "   1) xtls-rprx-direct [$RED推荐$PLAIN]"
+        echo -e "   1) xtls-rprx-vision [$RED推荐$PLAIN]"
         echo "   2) xtls-rprx-origin"
         read -p "  请选择流控模式[默认:direct]" answer
         [[ -z "$answer" ]] && answer=1
         case $answer in
             1)
-                FLOW="xtls-rprx-direct"
+                FLOW="xtls-rprx-vision"
                 ;;
             2)
                 FLOW="xtls-rprx-origin"
                 ;;
             *)
-                colorEcho $RED " 无效选项，使用默认的xtls-rprx-direct"
-                FLOW="xtls-rprx-direct"
+                colorEcho $RED " 无效选项，使用默认的xtls-rprx-vision"
+                FLOW="xtls-rprx-vision"
                 ;;
         esac
         colorEcho $BLUE " 流控模式：$FLOW"
