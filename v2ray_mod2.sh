@@ -351,20 +351,20 @@ getData() {
     if [[ "$XTLS" = "true" ]]; then
         echo ""
         colorEcho $BLUE " 请选择流控模式:" 
-        echo -e "   1) xtls-rprx-vision [$RED推荐$PLAIN]"
+        echo -e "   1) xtls-rprx-direct [$RED推荐$PLAIN]"
         echo "   2) xtls-rprx-origin"
         read -p "  请选择流控模式[默认:direct]" answer
         [[ -z "$answer" ]] && answer=1
         case $answer in
             1)
-                FLOW="xtls-rprx-vision"
+                FLOW="xtls-rprx-direct"
                 ;;
             2)
                 FLOW="xtls-rprx-origin"
                 ;;
             *)
-                colorEcho $RED " 无效选项，使用默认的xtls-rprx-vision"
-                FLOW="xtls-rprx-vision"
+                colorEcho $RED " 无效选项，使用默认的xtls-rprx-direct"
+                FLOW="xtls-rprx-direct"
                 ;;
         esac
         colorEcho $BLUE " 流控模式：$FLOW"
