@@ -357,7 +357,7 @@ getData() {
         colorEcho $BLUE " 请选择流控模式:" 
         echo -e "   1) xtls-rprx-vision [$RED推荐$PLAIN]"
         echo "   2) xtls-rprx-origin"
-        read -p "  请选择流控模式[默认:direct]" answer
+        read -p "  请选择流控模式[默认:vision]" answer
         [[ -z "$answer" ]] && answer=1
         case $answer in
             1)
