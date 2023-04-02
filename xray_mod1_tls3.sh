@@ -1786,7 +1786,7 @@ menu() {
     echo "#################################################################"
     echo -e "#                     ${RED}Xray一键安装脚本${PLAIN}				#"
     echo -e "# ${GREEN}原作者${PLAIN}: 网络跳越(hijk)					#"
-    echo -e "# ${GREEN}作  者${PLAIN}: Shawn							#"
+    echo -e "# ${GREEN}本版本维护${PLAIN}: Shawn						#"
     echo -e "# ${GREEN}系统建议${PLAIN}:${BLUE}CentOS 9						${PLAIN}#"
     echo "#################################################################"
     echo -e "  ${GREEN}1.${PLAIN}   安装Xray-VMESS"
