@@ -1203,7 +1203,7 @@ vlessXTLSConfig() {
     },
     "streamSettings": {
         "network": "tcp",
-        "security": "xtls",
+        "security": "tls",
         "xtlsSettings": {
             "serverName": "$DOMAIN",
             "alpn": ["http/1.1", "h2"],
