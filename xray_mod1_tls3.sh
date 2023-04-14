@@ -1193,27 +1193,38 @@ vlessXTLSConfig() {
       "fallbacks": [
           {
               "alpn": "http/1.1",
-              "dest": 80
+              "dest": 80,
+              "xver": 1
           },
           {
               "alpn": "h2",
-              "dest": 81
+              "dest": 81,
+              "xver": 1
           }
       ]
     },
     "streamSettings": {
         "network": "tcp",
         "security": "tls",
-        "xtlsSettings": {
+        "tlsSettings": {
+            "rejectUnknownSni": true,
+            "minVersion": "1.2",
             "serverName": "$DOMAIN",
-            "alpn": ["http/1.1", "h2"],
             "certificates": [
                 {
+                    "ocspStapling": 3600,
                     "certificateFile": "$CERT_FILE",
                     "keyFile": "$KEY_FILE"
                 }
             ]
         }
+    },
+    "sniffing": {
+        "enabled": true,
+        "destOverride": [
+            "http",
+            "tls"
+        ]
     }
   }],
   "outbounds": [{
@@ -1223,7 +1234,15 @@ vlessXTLSConfig() {
     "protocol": "blackhole",
     "settings": {},
     "tag": "blocked"
-  }]
+  }],
+    "policy": {
+        "levels": {
+            "0": {
+                "handshake": 2, // 连接建立时的握手时间限制，单位为秒，默认值为 4，建议与默认值不同
+                "connIdle": 120 // 连接空闲的时间限制，单位为秒，默认值为 300，建议与默认值不同
+            }
+        }
+    }
 }
 EOF
 }
