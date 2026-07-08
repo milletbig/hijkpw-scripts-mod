@@ -174,8 +174,12 @@ getVersion() {
     VER=`/usr/local/bin/xray version|head -n1 | awk '{print $2}'`
     RETVAL=$?
     CUR_VER="$(normalizeVersion "$(echo "$VER" | head -n 1 | cut -d " " -f2)")"
-    TAG_URL="https://api.github.com/repos/XTLS/Xray-core/releases/latest"
-    NEW_VER="$(normalizeVersion "$(curl -s "${TAG_URL}" --connect-timeout 10| grep 'tag_name' | cut -d\" -f4)")"
+    
+    # 修改 1: 去掉 URL 末尾的 /latest，获取所有版本列表
+    TAG_URL="https://api.github.com/repos/XTLS/Xray-core/releases"
+    
+    # 修改 2: 增加 head -n 1，只截取返回列表中的第一个版本号（也就是最新的预发布或正式版）
+    NEW_VER="$(normalizeVersion "$(curl -s "${TAG_URL}" --connect-timeout 10 | grep '"tag_name":' | head -n 1 | cut -d\" -f4)")"
 
     if [[ $? -ne 0 ]] || [[ $NEW_VER == "" ]]; then
         colorEcho $RED " 检查Xray版本信息失败，请检查网络"
