@@ -1182,7 +1182,7 @@ install() {
         yum clean all
     fi
     #echo $CMD_UPGRADE | bash
-    $CMD_INSTALL wget curl unzip vim
+    $CMD_INSTALL wget curl unzip vim jq
     res=`which unzip 2>/dev/null`
     if [[ $? -ne 0 ]]; then
         colorEcho $RED " unzip安装失败，请检查网络"
@@ -1345,51 +1345,63 @@ getConfigFileInfo() {
     protocol="VLESS"
     kcp="false"
 
-    uid=`grep id $CONFIG_FILE | head -n1| cut -d: -f2 | tr -d \",' '`
-    network=`grep network $CONFIG_FILE  | tail -n1| cut -d: -f2 | tr -d \",' '`
-    [[ -z "$network" ]] && network="tcp"
-
-    res=`grep realitySettings $CONFIG_FILE`
-    if [[ "$res" != "" ]]; then
-        reality="true"
-        domain=`grep serverNames $CONFIG_FILE | cut -d\" -f4`
-        port=`grep port $CONFIG_FILE | head -n1 | cut -d: -f2 | tr -d \",' '`
-        privateKey=`grep privateKey $CONFIG_FILE | cut -d: -f2 | tr -d \",' '`
-        publicKey=`/usr/local/bin/xray x25519 -i $privateKey | grep -i "public" | awk '{print $NF}'`
-        flow="xtls-rprx-vision"
-        encryption="none"
+    if ! command -v jq > /dev/null 2>&1; then
+        colorEcho $RED " 缺少jq，请先安装：apt install -y jq 或 yum install -y jq"
         return
     fi
 
-    domain=`grep '"serverName":' $CONFIG_FILE | cut -d: -f2 | tr -d \",' '`
-    if [[ "$domain" = "" ]]; then
-        domain=`grep Host $CONFIG_FILE | cut -d: -f2 | tr -d \",' '`
-        if [[ "$domain" != "" ]]; then
-            ws="true"
-            tls="true"
-            wspath=`grep path $CONFIG_FILE | cut -d: -f2 | tr -d \",' '`
-        fi
-    else
-        tls="true"
-    fi
-    if [[ "$ws" = "true" ]]; then
-        port=`grep -i ssl $NGINX_CONF_PATH${domain}.conf| head -n1 | awk '{print $2}'`
-    else
-        port=`grep port $CONFIG_FILE | cut -d: -f2 | tr -d \",' '`
-    fi
-    res=`grep -i kcp $CONFIG_FILE`
-    if [[ "$res" != "" ]]; then
-        kcp="true"
-        type=`grep header -A 3 $CONFIG_FILE | grep 'type' | cut -d: -f2 | tr -d \",' '`
-        seed=`grep seed $CONFIG_FILE | cut -d: -f2 | tr -d \",' '`
-    fi
-
+    uid=`jq -r '.inbounds[0].settings.clients[0].id // ""' $CONFIG_FILE`
+    network=`jq -r '.inbounds[0].streamSettings.network // "tcp"' $CONFIG_FILE`
+    security=`jq -r '.inbounds[0].streamSettings.security // "none"' $CONFIG_FILE`
+    flow=`jq -r '.inbounds[0].settings.clients[0].flow // ""' $CONFIG_FILE`
     encryption="none"
-    flow=`grep flow $CONFIG_FILE | cut -d: -f2 | tr -d \",' '`
+
     if [[ "$flow" != "" ]]; then
         vision="true"
     else
         flow="none"
+    fi
+
+    if [[ "$network" = "ws" ]]; then
+        ws="true"
+    fi
+    if [[ "$network" = "kcp" ]]; then
+        kcp="true"
+        type=`jq -r '.inbounds[0].streamSettings.kcpSettings.header.type // "none"' $CONFIG_FILE`
+        seed=`jq -r '.inbounds[0].streamSettings.kcpSettings.seed // ""' $CONFIG_FILE`
+    fi
+
+    if [[ "$security" = "reality" ]]; then
+        reality="true"
+        tls="true"
+    elif [[ "$security" = "tls" ]]; then
+        tls="true"
+    fi
+
+    # 域名探测链：serverName -> 证书文件名(去.pem) -> serverNames[0] -> ws Host
+    domain=`jq -r '.inbounds[0].streamSettings.tlsSettings.serverName // ""' $CONFIG_FILE`
+    if [[ "$domain" = "" ]]; then
+        certfile=`jq -r '.inbounds[0].streamSettings.tlsSettings.certificates[0].certificateFile // ""' $CONFIG_FILE`
+        domain=${certfile##*/}
+        domain=${domain%.pem}
+    fi
+    if [[ "$domain" = "" ]]; then
+        domain=`jq -r '.inbounds[0].streamSettings.realitySettings.serverNames[0] // ""' $CONFIG_FILE`
+    fi
+    if [[ "$domain" = "" ]]; then
+        domain=`jq -r '.inbounds[0].streamSettings.wsSettings.headers.Host // ""' $CONFIG_FILE`
+    fi
+
+    if [[ "$reality" = "true" ]]; then
+        privateKey=`jq -r '.inbounds[0].streamSettings.realitySettings.privateKey // ""' $CONFIG_FILE`
+        publicKey=`/usr/local/bin/xray x25519 -i $privateKey | grep -i "public" | awk '{print $NF}'`
+    fi
+
+    if [[ "$ws" = "true" ]]; then
+        wspath=`jq -r '.inbounds[0].streamSettings.wsSettings.path // "/"' $CONFIG_FILE`
+        port=`grep -i ssl $NGINX_CONF_PATH${domain}.conf | head -n1 | awk '{print $2}'`
+    else
+        port=`jq -r '.inbounds[0].port' $CONFIG_FILE`
     fi
 }
 
@@ -1431,7 +1443,7 @@ showInfo() {
         echo -e "   ${BLUE}传输协议(network)：${PLAIN} ${RED}${network}${PLAIN}"
         echo -e "   ${BLUE}伪装域名/主机名(host)/SNI/peer名称：${PLAIN}${RED}${domain}${PLAIN}"
         echo -e "   ${BLUE}公钥(pbK)：${PLAIN}${RED}${publicKey}${PLAIN}"
-        echo -e "   ${BLUE}底层安全传输(tls)：${PLAIN}${RED}REALITY${PLAIN}"
+        echo -e "   ${BLUE}底层安全传输(tls)：${PLAIN}${RED}${security}${PLAIN}"
         link="vless://${uid}@${IP}:${port}?encryption=none&flow=xtls-rprx-vision&security=reality&sni=${domain}&fp=chrome&pbk=${publicKey}#xray"
         echo ""
         echo -e "   ${BLUE}vless链接:${PLAIN} $RED$link$PLAIN"
@@ -1446,11 +1458,10 @@ showInfo() {
         echo -e "   ${BLUE}传输协议(network)：${PLAIN} ${RED}${network}${PLAIN}" 
         echo -e "   ${BLUE}伪装类型(type)：${PLAIN}${RED}none$PLAIN"
         echo -e "   ${BLUE}伪装域名/主机名(host)/SNI/peer名称：${PLAIN}${RED}${domain}${PLAIN}"
+        echo -e "   ${BLUE}底层安全传输(tls)：${PLAIN}${RED}${security}${PLAIN}"
         if [[ "$vision" = "true" ]]; then
-            echo -e "   ${BLUE}底层安全传输(tls)：${PLAIN}${RED}TLS+Vision${PLAIN}"
             link="vless://${uid}@${domain}:${port}?encryption=none&security=tls&type=tcp&flow=${flow}&sni=${domain}#xray"
         else
-            echo -e "   ${BLUE}底层安全传输(tls)：${PLAIN}${RED}TLS${PLAIN}"
             link="vless://${uid}@${domain}:${port}?encryption=none&security=tls&type=tcp&sni=${domain}#xray"
         fi
     else
