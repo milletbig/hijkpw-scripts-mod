@@ -1378,12 +1378,29 @@ getConfigFileInfo() {
         tls="true"
     fi
 
-    # 域名探测链：serverName -> 证书文件名(去.pem) -> serverNames[0] -> ws Host
+    # 域名探测链：serverName -> acme.sh证书父目录名(去_ecc/_ec) -> 证书文件名 -> serverNames[0] -> ws Host
     domain=`jq -r '.inbounds[0].streamSettings.tlsSettings.serverName // ""' $CONFIG_FILE`
     if [[ "$domain" = "" ]]; then
         certfile=`jq -r '.inbounds[0].streamSettings.tlsSettings.certificates[0].certificateFile // ""' $CONFIG_FILE`
-        domain=${certfile##*/}
-        domain=${domain%.pem}
+        if [[ "$certfile" = */* ]]; then
+            # acme.sh 布局：/root/.acme.sh/<domain>_ecc/fullchain.cer，域名在父目录名中
+            cand=${certfile%/*}
+            cand=${cand##*/}
+            cand=${cand%_ecc}
+            cand=${cand%_ec}
+            cand=${cand#\*.}
+            if [[ "$cand" =~ ^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)+$ ]]; then
+                domain=$cand
+            fi
+            # 兜底：证书文件名（脚本部署格式为 <domain>.pem）
+            if [[ "$domain" = "" ]]; then
+                cand=${certfile##*/}
+                cand=${cand%.*}
+                if [[ "$cand" =~ ^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)+$ ]]; then
+                    domain=$cand
+                fi
+            fi
+        fi
     fi
     if [[ "$domain" = "" ]]; then
         domain=`jq -r '.inbounds[0].streamSettings.realitySettings.serverNames[0] // ""' $CONFIG_FILE`
